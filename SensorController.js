@@ -14,7 +14,7 @@ const config = require('./config');
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res) => {
-    let hue = new HueMotionSensor(config.url);
+    const hue = new HueMotionSensor(config.url);
     hue.getAll(res)
         .then(body => res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body))))
         .catch(err => console.log(err));
@@ -26,7 +26,7 @@ class HueMotionSensor {
     }
     
     getAll(res){
-        let options = {
+        const options = {
             uri: this.url,
             json: true 
         };
@@ -37,17 +37,17 @@ class HueMotionSensor {
     getTemperatureInFahrenheit(json){
         let tempInFaren = json[_.findKey(json, o => o.name == 'Hue temperature sensor 1')].state.temperature;
 
-        let temperature = {};
+        const temperature = {};
         temperature.temperature = {};
         
         let tempValue = tempInFaren*0.018+32;
-        let tempUnit = "Farenheit." 
+        const tempUnit = "Farenheit." 
 
         temperature.temperature.value = tempValue;
         temperature.temperature.symbol = "°F";
         temperature.temperature.unit = tempUnit;
-
-        temperature.temperature.alexaSpokenValue = "The current ambient temperature is " + Math.round(tempValue) + " degrees " + tempUnit; 
+        temperature.temperature.alexaSpokenValue = "The current ambient temperature is " + Math.round(tempValue) + " degrees " + tempUnit;
+        
         return temperature;
     }
 
@@ -55,7 +55,7 @@ class HueMotionSensor {
         let result = _.findKey(json, o => o.name == 'Hue motion sensor');
         let lastMotionDetectedTimestamp = moment.utc(json[result].state.lastupdated).local().format('MM-DD hh:mm:ss a');
         moment().local();
-        let timestamp = {};
+        const timestamp = {};
 
         timestamp.movement = {};
         timestamp.movement.value = lastMotionDetectedTimestamp;        
