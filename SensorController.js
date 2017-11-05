@@ -13,7 +13,7 @@ const config = require('./config');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
     let hue = new HueMotionSensor(config.url);
     hue.getAll(res)
         .then(body => res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body))))
