@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -13,7 +15,12 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', function (req, res) {
     let hue = new HueMotionSensor(config.url);
-    hue.getAll(res);
+    hue.getAll(res).then(function (body) {    
+            res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body)));
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
 });
 
 class HueMotionSensor {
@@ -24,19 +31,10 @@ class HueMotionSensor {
     getAll(res){
         var options = {
             uri: this.url,
-            json: true // Automatically parses the JSON string in the response
+            json: true 
         };
-        var self = this;
-        rp(options)
 
-        .then(function (body) {    
-            res.status(200).send(_.merge(self.getLastMotionDetected(body), self.getTemperatureInFahrenheit(body)));
-        })
-        .catch(function (err) {
-            // API call failed...
-            console.log(err);
-        });
-
+        return rp(options)
     }
 
     getTemperatureInFahrenheit(json){
@@ -46,23 +44,25 @@ class HueMotionSensor {
         temperature.temperature = {};
         
         var tempValue = tempInFaren*0.018+32;
-        var tempUnit = "Farenheit;" 
+        var tempUnit = "Farenheit." 
 
         temperature.temperature.value = tempValue;
         temperature.temperature.symbol = "°F";
         temperature.temperature.unit = tempUnit;
-        temperature.temperature.spoken = "The current temperature is " + Math.round(tempValue) + " degrees " + tempUnit; 
+
+        temperature.temperature.alexaSpokenValue = "The current ambient temperature is " + Math.round(tempValue) + " degrees " + tempUnit; 
         return temperature;
     }
 
     getLastMotionDetected(json){
         var result = _.findKey(json, function(o) { return o.name == 'Hue motion sensor'; });
-        var foo = moment.utc(json[result].state.lastupdated).local().format('MM-DD hh:mm:ss a');
+        var lastMotionDetectedTimestamp = moment.utc(json[result].state.lastupdated).local().format('MM-DD hh:mm:ss a');
         moment().local();
         var timestamp = {};
 
         timestamp.movement = {};
-        timestamp.movement.value = foo;        
+        timestamp.movement.value = lastMotionDetectedTimestamp;        
+
         return timestamp;
     }
 }
