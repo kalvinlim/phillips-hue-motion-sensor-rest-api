@@ -15,12 +15,9 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', function (req, res) {
     let hue = new HueMotionSensor(config.url);
-    hue.getAll(res).then(function (body) {    
-            res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body)));
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+    hue.getAll(res)
+        .then(body => res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body))))
+        .catch(err => console.log(err));
 });
 
 class HueMotionSensor {
@@ -29,7 +26,7 @@ class HueMotionSensor {
     }
     
     getAll(res){
-        var options = {
+        let options = {
             uri: this.url,
             json: true 
         };
@@ -38,13 +35,13 @@ class HueMotionSensor {
     }
 
     getTemperatureInFahrenheit(json){
-        var tempInFaren = json[_.findKey(json, function(o) { return o.name == 'Hue temperature sensor 1'; })].state.temperature;
+        let tempInFaren = json[_.findKey(json, o => o.name == 'Hue temperature sensor 1')].state.temperature;
 
-        var temperature = {};
+        let temperature = {};
         temperature.temperature = {};
         
-        var tempValue = tempInFaren*0.018+32;
-        var tempUnit = "Farenheit." 
+        let tempValue = tempInFaren*0.018+32;
+        let tempUnit = "Farenheit." 
 
         temperature.temperature.value = tempValue;
         temperature.temperature.symbol = "°F";
@@ -55,10 +52,10 @@ class HueMotionSensor {
     }
 
     getLastMotionDetected(json){
-        var result = _.findKey(json, function(o) { return o.name == 'Hue motion sensor'; });
-        var lastMotionDetectedTimestamp = moment.utc(json[result].state.lastupdated).local().format('MM-DD hh:mm:ss a');
+        let result = _.findKey(json, o => o.name == 'Hue motion sensor');
+        let lastMotionDetectedTimestamp = moment.utc(json[result].state.lastupdated).local().format('MM-DD hh:mm:ss a');
         moment().local();
-        var timestamp = {};
+        let timestamp = {};
 
         timestamp.movement = {};
         timestamp.movement.value = lastMotionDetectedTimestamp;        
