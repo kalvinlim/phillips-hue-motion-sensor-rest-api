@@ -17,7 +17,8 @@ const config = require(path.normalize(__dirname + "/../config.js"));
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/test', (req, res) => {
-    res.status(200).send("{'key':'value'}");
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify({'key':'value'}));
 });
 
 router.get('/', (req, res) => {
