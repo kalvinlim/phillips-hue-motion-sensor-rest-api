@@ -9,14 +9,28 @@ const app = express();
 const Promise = require("bluebird");
 const rp = Promise.promisifyAll(require("request-promise"));
 const request = require("request");
-const config = require('./config');
+const path    = require("path");
+
+const config = require(path.normalize(__dirname + "/../config.js"));
+
 
 router.use(bodyParser.urlencoded({ extended: true }));
+
+router.get('/test', (req, res) => {
+    res.status(200).send("{'key':'value'}");
+});
 
 router.get('/', (req, res) => {
     const hue = new HueMotionSensor(config.url);
     hue.getAll(res)
         .then(body => res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body))))
+        .catch(err => console.log(err));
+});
+
+router.get('/rooms', (req, res) => {
+    const hue = new HueMotionSensor(config.url);
+    hue.requestAllRooms(res)
+        .then(body => res.status(200).send(body))
         .catch(err => console.log(err));
 });
 
@@ -62,6 +76,17 @@ class HueMotionSensor {
 
         return timestamp;
     }
+
+    requestAllRooms(res){
+        const options = {
+            uri: 'http://192.168.2.10/api/G9dOkDFP3bXMVN6tL4feIYyxIzyw7aoZOZe-Z5t4/groups',
+            json: true 
+        };
+        
+
+        return rp(options);
+    }
+
 }
 
 module.exports = router;

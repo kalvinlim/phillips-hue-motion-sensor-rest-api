@@ -1,3 +1,3 @@
 var config = {};
-config.url = 'http://[ip]/api/[user]/sensors';
+config.url = 'http://192.168.2.10/api/G9dOkDFP3bXMVN6tL4feIYyxIzyw7aoZOZe-Z5t4/sensors';
 module.exports = config;
