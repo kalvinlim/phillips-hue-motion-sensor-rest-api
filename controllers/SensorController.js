@@ -65,8 +65,8 @@ class HueMotionSensor {
         temperature.temperature.value = tempValue;
         temperature.temperature.symbol = "°F";
         temperature.temperature.unit = tempUnit;
-        temperature.temperature.alexaSpokenValue = "The current ambient temperature is " + Math.round(tempValue) + " degrees " + tempUnit;
-        
+        //temperature.temperature.alexaSpokenValue = "The current ambient temperature is " + Math.round(tempValue) + " degrees " + tempUnit;
+         temperature.temperature.alexaSpokenValue = "The current indoor temperature is " + Math.round(tempValue) + " degrees " + tempUnit;
         return temperature;
     }
 
