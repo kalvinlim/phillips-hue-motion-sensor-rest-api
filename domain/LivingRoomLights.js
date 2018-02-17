@@ -1,12 +1,23 @@
-class LivingRoomControl {
+'use strict';
+
+const Promise = require("bluebird");
+const rp = Promise.promisifyAll(require("request-promise"));
+const request = require("request");
+const path    = require("path");
+const _ = require('lodash');
+
+const config = require(path.normalize(__dirname + "/../config.js"));
+
+class LivingRoomLights {
     constructor(url) {
         this.url = url;
+        this.baseUrl = config.baseUrl+"/groups/";
     }
 
     setOn(groupKey){
         const options = {
             method: 'PUT',
-            uri: 'http://192.168.2.10/api/G9dOkDFP3bXMVN6tL4feIYyxIzyw7aoZOZe-Z5t4/groups/'+groupKey+'/action',
+            uri: this.baseUrl+groupKey+'/action',
             body: {
                 "on" : true,
                 "bri": 254,
@@ -22,13 +33,15 @@ class LivingRoomControl {
     setOff(groupKey){
         const options = {
             method: 'PUT',
-            uri: 'http://192.168.2.10/api/G9dOkDFP3bXMVN6tL4feIYyxIzyw7aoZOZe-Z5t4/groups/'+groupKey+'/action',
+            uri: this.baseUrl+groupKey+'/action',
             body: {
                 "on" : false
             },
             json: true
         };
-        
+        console.log(this.baseUrl+groupKey+'/action');
         return rp(options);
     }
 }
+
+module.exports = LivingRoomLights;

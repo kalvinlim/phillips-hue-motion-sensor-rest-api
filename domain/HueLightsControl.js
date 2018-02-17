@@ -14,7 +14,7 @@ class HueLightsControl {
 
     getGroups(){
         const options = {
-            uri: this.urls,
+            uri: this.url,
             json: true
         };
 
@@ -24,8 +24,8 @@ class HueLightsControl {
     findGroupKey(json, groupName){
         let key = _.findKey(json, o => o.name == groupName);
         let bloom = json[key];
-        console.log(key);
-        console.log(bloom);
+
+        return key;
     }
 }
 
