@@ -17,9 +17,13 @@ const config = require(path.normalize(__dirname + "/../config.js"));
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/test', (req, res) => {
+
+ const hue = new HueLightsControl();
     res.setHeader('Content-Type', 'application/json');
     res.status(200).send(JSON.stringify({'key':'value'}));
 });
+
+
 
 router.get('/', (req, res) => {
     const hue = new HueMotionSensor(config.url);
@@ -84,10 +88,8 @@ class HueMotionSensor {
             json: true 
         };
         
-
         return rp(options);
     }
-
 }
 
 module.exports = router;
