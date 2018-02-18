@@ -27,6 +27,7 @@ class HueLightsControl {
 
         return key;
     }
+
 }
 
 module.exports =  HueLightsControl;
