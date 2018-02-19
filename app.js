@@ -9,7 +9,19 @@ const FrontLightController = require('./controllers/FrontLightController');
 
 //const DashboardController = require('./controllers/DashboardController');
 
+const path    = require("path");
+const config = require(path.normalize(__dirname + "/config.js"));
+
 app.use(express.static('public'))
+
+app.all('*', function (req, res, next){
+	if(config.apiKey == req.query.apiKey){
+		next();
+	} else {
+		res.status(401).send();
+	}
+})
+
 
 app.use('/status', StatusController);
 app.use('/sensor', SensorController);

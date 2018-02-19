@@ -23,7 +23,6 @@ router.get('/', (req, res) => {
     hue.getGroups().then(json =>{
         let status = _.map(json, function(n){
             var state = n.state.any_on ? '[ON]' : 'off';
-            console.log(n.name + " - " + state);
             return n.name + " : " + state;
         });
 
