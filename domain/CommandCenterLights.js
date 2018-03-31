@@ -11,8 +11,8 @@ const config = require(path.normalize(__dirname + "/../config.js"));
 const HueLightsControl = require(path.normalize(__dirname + '/../domain/HueLightsControl.js'));
  
 class CommandCenterLights {
-    constructor(url) {
-        this.url = config.baseUrl + '/groups/';
+    constructor() {
+        this.url = `${config.baseUrl}/groups`;
         const hueLightsControl = new HueLightsControl();
         hueLightsControl.getGroups().then(json => {
             hueLightsControl.findGroupKey(json);
@@ -25,7 +25,7 @@ class CommandCenterLights {
     setBloom(state, brightness, hue, sat){
         const options = {
             method: 'PUT',
-            uri: this.url + this.bloomKey + '/action',
+            uri: `${this.url}/${this.bloomKey}/action`,
             body: {
                 "on" : state,
                 "bri" : brightness,
@@ -41,7 +41,7 @@ class CommandCenterLights {
     setLightStrip(state, brightness, hue, sat){
         const options = {
             method: 'PUT',
-            uri: this.url + this.lightStripKey + '/action',
+            uri: `${this.url}/${this.lightStripKey}/action`,
             body: {
                 "on" : state,
                 "bri" : brightness,
@@ -57,7 +57,7 @@ class CommandCenterLights {
     setCeilingLights(state, brightness, hue, sat){
         const options = {
             method: 'PUT',
-            uri: this.url + this.ceilingLightsKey + '/action',
+            uri: `${this.url}/${this.ceilingLightsKey}/action`,
             body: {
                 "on" : state,
                 "bri" : brightness,

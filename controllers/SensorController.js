@@ -16,32 +16,16 @@ const config = require(path.normalize(__dirname + "/../config.js"));
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/test', (req, res) => {
-
- const hue = new HueLightsControl();
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(JSON.stringify({'key':'value'}));
-});
-
-
-
 router.get('/', (req, res) => {
-    const hue = new HueMotionSensor(config.url);
+    const hue = new HueMotionSensor(config.baseUrl);
     hue.getAll(res)
         .then(body => res.status(200).send(_.merge(hue.getLastMotionDetected(body), hue.getTemperatureInFahrenheit(body))))
         .catch(err => console.log(err));
 });
 
-router.get('/rooms', (req, res) => {
-    const hue = new HueMotionSensor(config.url);
-    hue.requestAllRooms(res)
-        .then(body => res.status(200).send(body))
-        .catch(err => console.log(err));
-});
-
 class HueMotionSensor {
     constructor(url) {
-        this.url = url;
+        this.url = `${url}/sensors`;
     }
     
     getAll(res){
@@ -80,15 +64,6 @@ class HueMotionSensor {
         timestamp.movement.value = lastMotionDetectedTimestamp;        
 
         return timestamp;
-    }
-
-    requestAllRooms(res){
-        const options = {
-            uri: 'http://192.168.2.10/api/G9dOkDFP3bXMVN6tL4feIYyxIzyw7aoZOZe-Z5t4/groups',
-            json: true 
-        };
-        
-        return rp(options);
     }
 }
 
